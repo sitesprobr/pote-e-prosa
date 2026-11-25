@@ -35,22 +35,53 @@
     main { max-width: 620px; margin: 0 auto; padding: 0 18px }
 
     header { text-align: center; padding: 30px 0 14px }
-    .logo { width: 150px; height: 150px; object-fit: cover; border-radius: 50%; margin: 0 auto 8px; display: block; border: 3px solid var(--accent2); box-shadow: 0 6px 18px rgba(0,0,0,.12) }
+
+    .logo {
+      width: 150px; height: 150px; object-fit: cover; border-radius: 50%;
+      margin: 0 auto 8px; display: block; border: 3px solid var(--accent2);
+      box-shadow: 0 6px 18px rgba(0,0,0,.12);
+      animation: logoEntra 1s ease both, logoFlutua 4s ease-in-out 1s infinite, logoBrilho 3s ease-in-out 1s infinite;
+    }
+    @keyframes logoEntra {
+      0% { opacity: 0; transform: scale(.6) }
+      60% { transform: scale(1.06) }
+      100% { opacity: 1; transform: scale(1) }
+    }
+    @keyframes logoFlutua {
+      0%, 100% { transform: translateY(0) }
+      50% { transform: translateY(-8px) }
+    }
+    @keyframes logoBrilho {
+      0%, 100% { box-shadow: 0 6px 18px rgba(0,0,0,.12), 0 0 0 0 rgba(201,138,75,.5) }
+      50% { box-shadow: 0 6px 22px rgba(0,0,0,.14), 0 0 26px 6px rgba(201,138,75,.55) }
+    }
+
     h1 {
       font-family: 'Pacifico', cursive; font-weight: 400; font-size: 42px; margin: 6px 0 0;
-      color: var(--accent)
+      color: var(--accent);
+      animation: sobe .8s ease .3s both
     }
-    .tag { color: var(--muted); margin: 4px 0 0; font-weight: 600 }
+    .tag { color: var(--muted); margin: 4px 0 0; font-weight: 600; animation: sobe .8s ease .45s both }
+
+    @keyframes sobe {
+      0% { opacity: 0; transform: translateY(12px) }
+      100% { opacity: 1; transform: none }
+    }
 
     h2 {
       font-family: 'Pacifico', cursive; font-weight: 400; font-size: 24px;
       color: var(--accent); margin: 30px 0 10px; text-align: center
     }
 
-    .item { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; box-shadow: 0 2px 8px rgba(138,90,43,.05) }
+    .item { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; box-shadow: 0 2px 8px rgba(138,90,43,.05); transition: transform .2s ease, box-shadow .2s ease }
+    .item:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(138,90,43,.14) }
     .item .nome-wrap { flex: 1; min-width: 0 }
     .item .nome { font-family: 'Pacifico', cursive; font-size: 20px; color: var(--accent) }
     .item .desc { color: var(--muted); font-size: 13.5px; margin-top: 3px }
+
+    /* Entrada suave dos cards */
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .55s ease }
+    .reveal.show { opacity: 1; transform: none }
 
     .q { display: flex; align-items: center; gap: 8px; flex: none }
     .q button { width: 34px; height: 34px; border-radius: 50%; border: 0; background: var(--line); color: var(--ink); font: 700 20px/1 inherit; cursor: pointer }
@@ -81,6 +112,11 @@
     .drawer-dados input { width: 100%; border: 1px solid var(--line); border-radius: 12px; background: var(--card); color: var(--ink); font: 500 15px inherit; padding: 11px }
     .drawer-rodape { padding: 14px 20px calc(16px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line) }
     .drawer-rodape .btn { width: 100%; border: 0; border-radius: 999px; background: #25d366; color: #fff; font: 700 17px inherit; padding: 14px; cursor: pointer }
+
+    @media (prefers-reduced-motion: reduce) {
+      .logo, h1, .tag { animation: none !important }
+      .reveal { opacity: 1; transform: none }
+    }
   </style>
 </head>
 
@@ -137,7 +173,7 @@
       if (!box || !list) return;
       list.forEach(function (it) {
         var n = it[0], sub = it[1] || "";
-        var card = document.createElement("div"); card.className = "item";
+        var card = document.createElement("div"); card.className = "item reveal";
         var wrap = document.createElement("div"); wrap.className = "nome-wrap";
         var s = document.createElement("div"); s.className = "nome"; s.textContent = n;
         wrap.appendChild(s);
@@ -153,6 +189,16 @@
       });
     }
     render("potes", data.potes);
+
+    // Revela os cards conforme rola
+    (function () {
+      var els = document.querySelectorAll(".reveal");
+      if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("show"); }); return; }
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("show"); obs.unobserve(en.target); } });
+      }, { threshold: .1 });
+      els.forEach(function (e) { obs.observe(e); });
+    })();
 
     function totalItens() { var t = 0; for (var k in qty) t += qty[k]; return t; }
 
