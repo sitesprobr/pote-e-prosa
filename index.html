@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Pote e Prosa – Cardápio</title>
+  <title>Pote e Prosa – Bolos no Pote</title>
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@500;600;700&display=swap"
     rel="stylesheet">
   <style>
@@ -34,9 +34,7 @@
 
     main { max-width: 620px; margin: 0 auto; padding: 0 18px }
 
-    .previa { background: var(--accent); color: #fff; text-align: center; font-weight: 700; font-size: 13px; padding: 7px; letter-spacing: .5px }
-
-    header { text-align: center; padding: 26px 0 14px }
+    header { text-align: center; padding: 30px 0 14px }
     .logo { width: 150px; height: 150px; object-fit: cover; border-radius: 50%; margin: 0 auto 8px; display: block; border: 3px solid var(--accent2); box-shadow: 0 6px 18px rgba(0,0,0,.12) }
     h1 {
       font-family: 'Pacifico', cursive; font-weight: 400; font-size: 42px; margin: 6px 0 0;
@@ -46,15 +44,13 @@
 
     h2 {
       font-family: 'Pacifico', cursive; font-weight: 400; font-size: 24px;
-      color: var(--accent); margin: 30px 0 10px
+      color: var(--accent); margin: 30px 0 10px; text-align: center
     }
 
-    ul { list-style: none; margin: 0; padding: 0 }
-
-    li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 4px; border-bottom: 1px solid var(--line) }
-    li .nome-wrap { flex: 1; min-width: 0 }
-    li span.nome { font-weight: 700 }
-    li span small { display: block; color: var(--muted); font-size: 13px; margin-top: 2px }
+    .item { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; box-shadow: 0 2px 8px rgba(138,90,43,.05) }
+    .item .nome-wrap { flex: 1; min-width: 0 }
+    .item .nome { font-family: 'Pacifico', cursive; font-size: 20px; color: var(--accent) }
+    .item .desc { color: var(--muted); font-size: 13.5px; margin-top: 3px }
 
     .q { display: flex; align-items: center; gap: 8px; flex: none }
     .q button { width: 34px; height: 34px; border-radius: 50%; border: 0; background: var(--line); color: var(--ink); font: 700 20px/1 inherit; cursor: pointer }
@@ -89,36 +85,25 @@
 </head>
 
 <body>
-  <div class="previa">✨ PRÉVIA — cardápio de exemplo, em breve os produtos reais ✨</div>
   <main>
     <header>
       <img class="logo" src="WhatsApp%20Image%202026-11-24%20at%209.40.13%20PM.jpeg" alt="Pote e Prosa">
       <h1>Pote e Prosa</h1>
-      <p class="tag">Sobremesas no pote & aquele cafezinho ☕</p>
+      <p class="tag">Bolos no pote feitos com carinho 🍮</p>
     </header>
 
     <section>
-      <h2>🍮 Sobremesas no Pote</h2>
-      <ul id="potes"></ul>
-    </section>
-
-    <section>
-      <h2>🎂 Bolo no Pote</h2>
-      <ul id="bolos"></ul>
-    </section>
-
-    <section>
-      <h2>☕ Cafeteria</h2>
-      <ul id="cafeteria"></ul>
+      <h2>🍮 Bolos no Pote — 200ml</h2>
+      <div id="potes"></div>
     </section>
 
     <div class="info">
       <p>📲 Monte seu pedido e envie pelo WhatsApp!</p>
-      <p>Esta é uma prévia — os sabores e valores reais entram em breve.</p>
+      <p>Escolha a massa (branca ou preta) nas observações do pedido.</p>
     </div>
   </main>
 
-  <div class="bar"><button id="send" disabled>Escolha um item</button></div>
+  <div class="bar"><button id="send" disabled>Escolha seu bolo no pote</button></div>
 
   <div class="overlay" id="overlay"></div>
   <aside class="drawer" id="drawer" aria-label="Resumo do pedido">
@@ -134,8 +119,8 @@
       <input id="c-tel" type="tel" placeholder="(00) 90000-0000">
       <label for="c-end">Endereço de entrega</label>
       <input id="c-end" type="text" placeholder="Rua, número, bairro, referência">
-      <label for="c-obs">Observações (opcional)</label>
-      <input id="c-obs" type="text" placeholder="Ex: sabores, data de entrega...">
+      <label for="c-obs">Massa / observações</label>
+      <input id="c-obs" type="text" placeholder="Ex: massa branca ou preta, data de entrega...">
     </div>
     <div class="drawer-rodape">
       <button class="btn" id="finalizar">Enviar pedido no WhatsApp</button>
@@ -148,15 +133,15 @@
     var qty = {};
 
     function render(id, list) {
-      var ul = document.getElementById(id);
-      if (!ul || !list) return;
+      var box = document.getElementById(id);
+      if (!box || !list) return;
       list.forEach(function (it) {
         var n = it[0], sub = it[1] || "";
-        var li = document.createElement("li");
+        var card = document.createElement("div"); card.className = "item";
         var wrap = document.createElement("div"); wrap.className = "nome-wrap";
-        var s = document.createElement("span"); s.className = "nome"; s.textContent = n;
-        if (sub) { var sm = document.createElement("small"); sm.textContent = sub; s.appendChild(sm); }
+        var s = document.createElement("div"); s.className = "nome"; s.textContent = n;
         wrap.appendChild(s);
+        if (sub) { var sm = document.createElement("div"); sm.className = "desc"; sm.textContent = sub; wrap.appendChild(sm); }
         var q = document.createElement("div"); q.className = "q";
         var minus = document.createElement("button"); minus.textContent = "−"; minus.hidden = true;
         var out = document.createElement("output"); out.hidden = true;
@@ -164,12 +149,10 @@
         function upd() { var c = qty[n] || 0; minus.hidden = out.hidden = !c; out.textContent = c; sync(); }
         plus.onclick = function () { qty[n] = (qty[n] || 0) + 1; upd(); };
         minus.onclick = function () { qty[n] = Math.max(0, (qty[n] || 0) - 1); if (!qty[n]) delete qty[n]; upd(); };
-        q.append(minus, out, plus); li.append(wrap, q); ul.appendChild(li);
+        q.append(minus, out, plus); card.append(wrap, q); box.appendChild(card);
       });
     }
     render("potes", data.potes);
-    render("bolos", data.bolos);
-    render("cafeteria", data.cafeteria);
 
     function totalItens() { var t = 0; for (var k in qty) t += qty[k]; return t; }
 
@@ -177,7 +160,7 @@
       var t = totalItens();
       var b = document.getElementById("send");
       b.disabled = !t;
-      b.textContent = t ? "Ver pedido (" + t + (t > 1 ? " itens" : " item") + ")" : "Escolha um item";
+      b.textContent = t ? "Ver pedido (" + t + (t > 1 ? " itens" : " item") + ")" : "Escolha seu bolo no pote";
       if (document.getElementById("drawer").classList.contains("aberto")) renderCarrinho();
     }
 
@@ -227,7 +210,7 @@
       if (nome) msg += "\n\nNome: " + nome;
       if (tel) msg += "\nTelefone: " + tel;
       if (end) msg += "\nEndereço: " + end;
-      if (obs) msg += "\nObservações: " + obs;
+      if (obs) msg += "\nMassa/Obs: " + obs;
       window.open("https://wa.me/" + WHATS + "?text=" + encodeURIComponent(msg), "_blank");
     };
   </script>
